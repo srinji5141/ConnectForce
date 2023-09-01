@@ -9,12 +9,14 @@ import numpy as np
 from numpy import asarray
 from numpy import savetxt
 
+# Enter login details
 email = input("What is your LinkedIn email: ")
 password = input("What is your LinkedIn passwords: ")
 
 driver = webdriver.Chrome()
 
 # https://stackoverflow.com/questions/48850974/selenium-scroll-to-end-of-page-in-dynamically-loading-webpage
+# Scrolls down dynamically loading connections page
 def scroll_down(driver):
     # Calculate scroll height
     current_height = driver.execute_script("return document.body.scrollHeight")
@@ -48,10 +50,13 @@ time.sleep(10)
 
 driver.get('https://www.linkedin.com/mynetwork/invite-connect/connections/')
 scroll_down(driver)
+
+# Webscrapes connections page
 linkedinPage = BeautifulSoup(driver.page_source, 'html.parser')
 
 driver.quit()
 
+# Collects names and occupations from connections page and populates array 
 masterTable = [['Name', 'Occupation']]
 linkedinCards = linkedinPage.find_all('li', class_="mn-connection-card artdeco-list")
 for linkedinCard in linkedinCards:
@@ -62,4 +67,5 @@ for linkedinCard in linkedinCards:
 print(masterTable)
 
 # https://stackoverflow.com/questions/48230230/typeerror-mismatch-between-array-dtype-object-and-format-specifier-18e 
+# Populates .tsv
 np.savetxt('LinkedIn_Connections_Webscraping_Table.tsv', masterTable, delimiter='\t', fmt='%s')
